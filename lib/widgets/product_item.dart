@@ -9,7 +9,7 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final product = Provider.of<Product>(context, listen: false);
-    final auth = Provider.of<Auth>(context,listen: false);
+    final auth = Provider.of<Auth>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -20,9 +20,13 @@ class ProductItem extends StatelessWidget {
               arguments: product.id,
             );
           },
-          child: Image.network(
-            product.imageUrl,
-            fit: BoxFit.cover,
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              fit: BoxFit.cover,
+              placeholder: AssetImage('assets/images/product-placeholder.png'),
+              image: NetworkImage(product.imageUrl),
+            ),
           ),
         ),
         footer: GridTileBar(
@@ -34,7 +38,7 @@ class ProductItem extends StatelessWidget {
                   color: Theme.of(context).accentColor,
                 ),
                 onPressed: () {
-                  product.toggleFavorite(auth.token,auth.userId);
+                  product.toggleFavorite(auth.token, auth.userId);
                 },
               );
             },
@@ -54,7 +58,7 @@ class ProductItem extends StatelessWidget {
                   content: Text('Item added to cart'),
                   action: SnackBarAction(
                     label: 'UNDO',
-                    onPressed: (){
+                    onPressed: () {
                       Provider.of<Cart>(context).removeSingleItem(product.id);
                     },
                   ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/helpers/custom_route.dart';
 import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/orders.dart';
@@ -25,23 +26,27 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: Auth(),
         ),
-        ChangeNotifierProxyProvider<Auth,Products>(
-          create: (ctx) => Products(),
-          update: (ctx, auth, lastproducts){
-            return Products()..updateItems(
-              auth.token, lastproducts == null ? [] : lastproducts.listProducts, auth.userId);
-          }
-        ),
+        ChangeNotifierProxyProvider<Auth, Products>(
+            create: (ctx) => Products(),
+            update: (ctx, auth, lastproducts) {
+              return Products()
+                ..updateItems(
+                    auth.token,
+                    lastproducts == null ? [] : lastproducts.listProducts,
+                    auth.userId);
+            }),
         ChangeNotifierProvider.value(
           value: Cart(),
         ),
-        ChangeNotifierProxyProvider<Auth,Orders>(
-          create: (ctx) => Orders(),
-          update: (ctx, auth, lastproducts){
-            return Orders()..updateOrders(
-              auth.token, lastproducts == null ? [] : lastproducts.orders, auth.userId);
-          }
-        ),
+        ChangeNotifierProxyProvider<Auth, Orders>(
+            create: (ctx) => Orders(),
+            update: (ctx, auth, lastproducts) {
+              return Orders()
+                ..updateOrders(
+                    auth.token,
+                    lastproducts == null ? [] : lastproducts.orders,
+                    auth.userId);
+            }),
       ],
       child: Consumer<Auth>(
         builder: (ctx, auth, _) => MaterialApp(
@@ -50,6 +55,12 @@ class MyApp extends StatelessWidget {
             primarySwatch: Colors.purple,
             accentColor: Colors.deepOrange,
             fontFamily: 'Lato',
+            pageTransitionsTheme: PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: CustomPageTransitionBuilder(),
+                TargetPlatform.iOS: CustomPageTransitionBuilder(),
+              },
+            ),
           ),
           home: auth.isAuth
               ? ProductsOverviewScreen()
